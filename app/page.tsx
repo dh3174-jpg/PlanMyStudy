@@ -1,58 +1,22 @@
 import { connection } from "next/server";
-import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { requireSuperadmin } from "@/lib/auth";
+import Studio from "@/components/studio";
+import { WORKSPACE } from "@/lib/workspace";
 
 export const instant = false;
 
-export default async function HomePage() {
-    await connection();
-
-    const supabase = await createClient();
-
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-        redirect("/login");
-    }
-
-    const { data: profile, error } = await supabase
-        .from("profiles")
-        .select("is_superadmin")
-        .eq("id", user.id)
-        .single();
-
-    if (error || !profile?.is_superadmin) {
-        redirect("/login?error=unauthorized");
-    }
-
-    return (
-        <main
-            style={{
-                minHeight: "100vh",
-                background: "#FCFAF6",
-                padding: "40px",
-            }}
-        >
-            <h1
-                style={{
-                    fontSize: "40px",
-                    color: "#262821",
-                    marginBottom: "12px",
-                }}
-            >
-                PlanMyStudy
-            </h1>
-
-            <p
-                style={{
-                    color: "#8D9188",
-                    fontSize: "18px",
-                }}
-            >
-                Superadmin access confirmed.
-            </p>
-        </main>
-    );
+export default async function HomePage({ searchParams }: PageProps<"/">) {
+  await connection();
+  const { supabase, user } = await requireSuperadmin();
+  const params = await searchParams;
+  const chainsResult = await supabase.from("prompt_chains").select("id,name,description,created_at").eq("workspace", WORKSPACE).order("created_at", { ascending: false });
+  const chains = chainsResult.data ?? [];
+  const requested = Number(params.chain);
+  const selected = chains.find(chain => chain.id === requested) ?? chains[0];
+  const [stepsResult, runsResult] = selected ? await Promise.all([
+    supabase.from("prompt_chain_steps").select("id,prompt_chain_id,step_order,prompt_text,created_at").eq("prompt_chain_id", selected.id).order("step_order").order("id"),
+    supabase.from("prompt_chain_runs").select("id,prompt_chain_id,user_id,input_data,output_data,created_at").eq("prompt_chain_id", selected.id).order("created_at", { ascending: false }),
+  ]) : [{ data: [], error: null }, { data: [], error: null }];
+  const error = chainsResult.error || stepsResult.error || runsResult.error;
+  return <Studio chains={chains} selected={selected ?? null} steps={stepsResult.data ?? []} runs={runsResult.data ?? []} email={user.email ?? "Superadmin"} loadError={error ? "Some records could not be loaded. Check database permissions and refresh before editing." : null} />;
 }
