@@ -304,7 +304,7 @@ button.danger-text:hover:not(:disabled) { border-color: var(--strawberry); backg
 .run-list button { border-left: 3px solid var(--strawberry); }
 .run-list button:hover:not(:disabled) { background: var(--blush); border-color: var(--strawberry); }
 .run-output { border-top-color: var(--strawberry); }
-.run-output .tabs button[aria-pressed="true"] { border-bottom-color: var(--strawberry); background: var(--blush); color: var(--berry-ink); }
+.run-output .tabs button[aria-selected="true"] { border-bottom-color: var(--strawberry); background: var(--blush); color: var(--berry-ink); }
 
 /* Forms use the same controls and visual hierarchy as the editor. */
 .modal-backdrop { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: #171b167a; z-index: 10; }
@@ -393,3 +393,62 @@ dialog.modal-backdrop::backdrop { background: transparent; }
   .modal h2 { font-size: 27px; }
 }
 @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+
+/* Phase 2: extend the approved editor with study inputs and saved output. */
+.run-form { width: 660px; }
+.run-form > .pill { margin-bottom: 16px; }
+.run-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
+.run-fields:disabled { opacity: .65; }
+.field-help { margin: 8px 0 0; color: var(--muted); font-size: 13px !important; }
+.generation-status { margin-top: 24px; padding: 16px; border: 1px solid var(--matcha); border-radius: 10px; background: var(--active); color: var(--primary); }
+.generation-status p { margin: 8px 0 0; }
+.run-form .alert { margin-top: 24px; }
+.all-runs { padding: 32px; }
+.all-runs h2 { margin-bottom: 8px; }
+.run-context { display: block; max-width: 680px; margin-top: 10px; white-space: pre-line; color: var(--muted); font-size: 14px; font-weight: 400; overflow-wrap: anywhere; }
+.latest-output { padding: 0 32px 32px; }
+.latest-output .run-output { margin-top: 0; }
+.run-output .section-heading h3 { margin: 12px 0 8px; }
+.run-output .tabs { flex-wrap: wrap; }
+.recommendation { padding: 24px; border: 1px solid var(--matcha); border-left: 4px solid var(--matcha); border-radius: 12px; background: var(--active); }
+.recommendation h3 { margin: 14px 0 8px; }
+.recommendation h4 { margin: 0 0 12px; font-size: 20px; color: var(--primary); }
+.recommendation p, .recommendation-reason p { margin: 0; white-space: pre-wrap; }
+.recommended-badge { display: inline-block; padding: 5px 9px; border: 1px solid var(--matcha); border-radius: 5px; background: var(--surface); color: var(--primary); font-size: 13px; font-weight: 600; }
+.study-plans { display: grid; gap: 24px; margin-top: 24px; }
+.study-plan { min-width: 0; padding: 24px; border: 1px solid var(--border); border-top: 3px solid var(--strawberry); border-radius: 12px; }
+.study-plan.recommended-plan { border-top-color: var(--matcha); }
+.study-plan .section-heading { margin-bottom: 12px; }
+.study-plan .section-heading h3 { margin: 0; }
+.schedule { list-style: none; margin: 20px 0 0; padding: 0; }
+.schedule li { display: grid; grid-template-columns: minmax(110px, .8fr) minmax(0, 2fr); gap: 20px; padding: 16px 0; border-top: 1px solid var(--border); font-size: 15px; overflow-wrap: anywhere; }
+.schedule-time span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+.schedule p { margin: 6px 0 0; white-space: pre-wrap; color: var(--muted); }
+.recommendation-reason { margin-top: 24px; padding: 24px; border-left: 3px solid var(--strawberry); border-radius: 10px; background: var(--ivory); }
+.run-details { display: block; }
+.run-details > div { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+@media (max-width: 1050px) { .schedule li { grid-template-columns: 1fr; gap: 10px; } .study-plan { padding: 20px; } }
+@media (max-width: 550px) { .all-runs { padding: 24px 20px; } .latest-output { padding: 0 20px 24px; } .run-details > div { grid-template-columns: 1fr; gap: 8px; } .recommendation, .study-plan, .recommendation-reason { padding: 20px; } }
+
+/* Navigation views reuse the existing theme and component styles. */
+.overview-grid { display: grid; grid-template-columns: minmax(240px, .8fr) minmax(0, 1.5fr); gap: 24px; align-items: start; }
+.overview-section { padding: 28px; }
+.overview-section h2 { margin-bottom: 12px; }
+.overview-section .section-heading { align-items: center; }
+.overview-section .section-heading h2 { margin: 0; }
+.overview-actions { display: grid; gap: 12px; margin-top: 24px; }
+.overview-empty { padding-top: 8px; }
+.overview-empty h3 { font-size: 20px; }
+.stat-context { display: block; margin-top: 12px; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.all-runs > .run-output { margin-top: 0; padding-top: 0; border-top: 0; }
+@media (max-width: 1050px) { .overview-grid { grid-template-columns: 1fr; } }
+@media (max-width: 550px) { .overview-section { padding: 24px 20px; } }
+
+.logout-form { margin-top: 16px; }
+.logout-button { width: 100%; background: transparent; }
+.logout-error { margin: 10px 0 0; color: var(--berry-ink); font-size: 13px; }
+@media (max-width: 900px) {
+  .sidebar-bottom { flex-wrap: wrap; }
+  .logout-form { margin-top: 0; margin-left: auto; }
+  .logout-button { min-width: 96px; }
+}
